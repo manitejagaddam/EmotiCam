@@ -24,7 +24,17 @@ sys.path.append("/path/to/LLaVA")
 # Initialize app and model client
 app = FastAPI(title="Kids Emotion & Safe Content API", version="1.0")
 client = get_client()
- 
+
+
+
+sentiment_ans = "happy"
+
+
+
+
+
+
+
 # Enable CORS for all origins (can restrict later)
 app.add_middleware( 
     CORSMiddleware,
@@ -58,7 +68,6 @@ def generate_fallback_response():
             "attentionSpan": "Short to medium format (10-15 minutes)",
         },
         "youtubeKidsQueries": [
-            "educational videos preschool kids",
             "learning songs children safe",
             "kids crafts activities simple",
             "animated stories children educational",
@@ -133,6 +142,7 @@ class EmotionRequest(BaseModel):
 
 @app.post("/api/emotion-v2")
 async def analyse_emotions_v2(req: EmotionRequest):
+    global sentiment_ans
     image_data = req.imageData
 
     if "," in image_data:
@@ -149,6 +159,7 @@ async def analyse_emotions_v2(req: EmotionRequest):
     try:
         img_np = np.array(image)
         result = DeepFace.analyze(img_np, actions=['emotion'], enforce_detection = False)
+        sentiment_ans = result[0]['dominant_emotion']
         print("Emotion Analysis Result:", result)
     except Exception as e:
         print("Error analyzing image:", e)
@@ -229,6 +240,7 @@ async def analyse_emotions_v2(req: EmotionRequest):
     
 @app.post("api/sentiment")
 async def sentiment_grabber(req: EmotionRequest):
+    global sentiment_ans
     image_data = req.imageData
 
     if not image_data:
@@ -249,6 +261,7 @@ async def sentiment_grabber(req: EmotionRequest):
     try:
         img_np = np.array(image)
         result = DeepFace.analyze(img_np, actions=['emotion'], enforce_detection = False)
+        sentiment_ans = result[0]['dominant_emotion']
         print("Emotion Analysis Result:", result)
     except Exception as e:
         print("Error analyzing image:", e)
@@ -305,16 +318,17 @@ Do not provide any URLs, descriptions, or extra text — only the titles, separa
         
     
 
-sentiment_ans = ""
 @app.post("/api/get_sentiment")
 async def get_Sentiment_val():
-    return sentiment_ans
+    global sentiment_ans
+    return JSONResponse(content={"emotion" : sentiment_ans})
 
 
 
 
 @app.post("/api/emotion")
 async def analyze_emotion(req: EmotionRequest):
+    global sentiment_ans
     image_data = req.imageData
 
     if "," in image_data:
@@ -331,6 +345,7 @@ async def analyze_emotion(req: EmotionRequest):
     try:
         img_np = np.array(image)
         result = DeepFace.analyze(img_np, actions=['emotion'], enforce_detection = False)
+        sentiment_ans = result[0]['dominant_emotion']
         print("Emotion Analysis Result:", result)
     except Exception as e:
         print("Error analyzing image:", e)
@@ -386,7 +401,7 @@ REQUIRED JSON FORMAT (copy exactly):
     "attentionSpan": "Short to medium format (5-15 minutes)"
   },
   "youtubeKidsQueries": [
-    "preschool learning songs kids",
+    "educational cartoons children safety vedios",
     "educational cartoons children safe",
     "kids dance movement videos",
     "simple crafts activities children",
@@ -400,11 +415,11 @@ REQUIRED JSON FORMAT (copy exactly):
     "family-friendly kids videos learning"
   ],
   "queryRanking": {
-    "bestMatch": "preschool learning songs kids",
+    "bestMatch": "educational cartoons children safety vedios",
     "reason": "Perfect match for happy preschooler with high energy - songs provide engagement and learning",
     "rankedQueries": [
       {
-        "query": "preschool learning songs kids",
+        "query": "educational cartoons children safety vedios",
         "score": 95,
         "reasoning": "Optimal for happy, high-energy preschooler - combines education with fun"
       },

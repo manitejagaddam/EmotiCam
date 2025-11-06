@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import type { ActionFunctionArgs } from "@remix-run/node";
 
 // =======================
-// Main Action
+//       Main Action
 // =======================
 export async function action({ request }: ActionFunctionArgs) {
 	if (request.method !== "POST") {
@@ -81,7 +81,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 // =======================
-// YouTube Service
+//     YouTube Service
 // =======================
 const YouTubeService = {
 	async fetchVideos(query: string, apiKey: string): Promise<any[]> {
@@ -158,7 +158,7 @@ const YouTubeService = {
 };
 
 // =======================
-// Filters
+//         Filters
 // =======================
 const Filters = {
 	isSafe(snippet: any) {
@@ -229,7 +229,7 @@ const Filters = {
 };
 
 // =======================
-// AI Query Selector
+//    AI Query Selector
 // =======================
 function getAIRankedQuery(
 	childAnalysis: any,
@@ -241,7 +241,7 @@ function getAIRankedQuery(
 }
 
 // =======================
-// Fallbacks
+//        Fallbacks
 // =======================
 const Fallbacks = {
 	randomQuery(): string {
@@ -299,7 +299,7 @@ const Fallbacks = {
 };
 
 // =======================
-// Utilities
+//        Utilities
 // =======================
 const Utils = {
 	clean(text: string | null) {

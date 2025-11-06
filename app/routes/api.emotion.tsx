@@ -50,7 +50,6 @@ REQUIRED JSON FORMAT (copy exactly):
     "attentionSpan": "Short to medium format (5-15 minutes)"
   },
   "youtubeKidsQueries": [
-    "preschool learning songs kids",
     "educational cartoons children safe",
     "kids dance movement videos",
     "simple crafts activities children",
@@ -64,14 +63,9 @@ REQUIRED JSON FORMAT (copy exactly):
     "family-friendly kids videos learning"
   ],
   "queryRanking": {
-    "bestMatch": "preschool learning songs kids",
+    "bestMatch": "educational cartoons children safe",
     "reason": "Perfect match for happy preschooler with high energy - songs provide engagement and learning",
     "rankedQueries": [
-      {
-        "query": "preschool learning songs kids",
-        "score": 95,
-        "reasoning": "Optimal for happy, high-energy preschooler - combines education with fun"
-      },
       {
         "query": "kids dance movement videos",
         "score": 90,
@@ -204,7 +198,6 @@ Always provide helpful, safe, educational content recommendations with intellige
           attentionSpan: "Short to medium format (10-15 minutes)"
         },
         youtubeKidsQueries: [
-          "educational videos preschool kids",
           "learning songs children safe",
           "kids crafts activities simple",
           "animated stories children educational",
@@ -221,11 +214,6 @@ Always provide helpful, safe, educational content recommendations with intellige
           bestMatch: "educational videos preschool kids",
           reason: "Well-balanced educational content suitable for curious preschooler with medium energy",
           rankedQueries: [
-            {
-              query: "educational videos preschool kids",
-              score: 90,
-              reasoning: "Perfect balance of education and engagement for preschool age"
-            },
             {
               query: "learning songs children safe",
               score: 85,

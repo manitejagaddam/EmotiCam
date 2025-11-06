@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useLoaderData, Link, useAsyncError } from "@remix-run/react";
 import { getUserFromRequest } from "~/lib/auth.server";
 import { log } from "node:console";
 
@@ -101,6 +101,7 @@ export default function Index() {
   const [isWebcamActive, setIsWebcamActive] = useState(false);
   const [capturedPhoto, setCapturedPhoto] = useState<string>("");
   const [detectionStep, setDetectionStep] = useState<string>("");
+  const [sentiment, setSentiment] = useState<string>("");
 
   // Start webcam
   const startWebcam = async () => {
@@ -136,6 +137,8 @@ export default function Index() {
   };
 
   // Analyze child's expression
+  // const analyzeExpression 
+  // onClick={() => {
   const analyzeExpression = async () => {
     if (!videoRef.current || !canvasRef.current || isDetecting) return;
 
@@ -207,6 +210,44 @@ export default function Index() {
       setIsDetecting(false);
     }
   };
+
+
+  const getSentimentAnalysis = async () =>{
+
+    try {      
+      const response = await fetch("http://127.0.0.1:8000/api/get_sentiment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ capturedPhoto }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result : " + result);
+      
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      // Step 3: Show results
+      setSentiment(result['emotion']);
+      console.log(result['emotion']);
+      
+      
+    } catch (err) {
+      setError("Error getting expression. Please check your Code Base.");
+      setDetectionStep("");
+      console.error("Error analyzing expression:", err);
+    } finally {
+      setIsDetecting(false);
+    }
+  }
 
   // Search for YouTube videos based on analysis (direct call with analysis parameter)
   const searchYouTubeVideosForAnalysis = async (analysisData: AnalysisResult) => {
@@ -488,7 +529,11 @@ export default function Index() {
           {isWebcamActive && (
             <div className="animate-slide-up">
               <button
-                onClick={analyzeExpression}
+                // onClick={analyzeExpression}
+                onClick={() => {
+                  analyzeExpression();
+                  getSentimentAnalysis();
+                }}
                 disabled={isDetecting}
                 className="group px-12 py-6 bg-gradient-to-r from-rainbow-red via-rainbow-yellow to-rainbow-green hover:from-rainbow-orange hover:via-rainbow-pink hover:to-rainbow-purple disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed rounded-3xl font-fun font-bold text-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 active:scale-95 border-4 border-white/50 text-white"
               >
@@ -533,6 +578,15 @@ export default function Index() {
             <div className="w-full max-w-6xl animate-scale-in">
               <div className="bg-gradient-to-br from-white/20 to-purple/20 backdrop-blur-md rounded-3xl p-8 mb-6 border-4 border-white/30 shadow-2xl">
                 <h2 className="text-4xl font-fun font-bold mb-6 text-center animate-slide-down">
+
+                  <span className="inline-block animate-jiggle text-5xl">🎥</span>
+                  <span className="mx-4 text-transparent bg-clip-text bg-gradient-to-r from-rainbow-red via-rainbow-yellow to-rainbow-blue">
+                    {sentiment}
+                  </span>
+                  <span className="inline-block animate-heart-beat text-5xl">🌟</span>
+                  <br />
+
+
                   <span className="inline-block animate-jiggle text-5xl">🎥</span>
                   <span className="mx-4 text-transparent bg-clip-text bg-gradient-to-r from-rainbow-red via-rainbow-yellow to-rainbow-blue">
                     Fun Videos for You!
